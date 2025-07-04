@@ -1,0 +1,39 @@
+"""MarkupSafe example."""
+
+module(
+    name = "etils-example",
+    version = "0.0.1",
+)
+
+bazel_dep(name = "rules_python", version = "0.0.0")
+bazel_dep(name = "rules_pkg", version = "1.1.0")
+bazel_dep(name = "platforms", version = "1.0.0")
+
+local_path_override(
+    module_name = "rules_python",
+    path = "../..",
+)
+
+git_override(
+    # See https://github.com/bazel-contrib/rules_python/issues/3056
+    module_name = "rules_pkg",
+    commit = "4eed5466fb7062e196c4fa01495e1dfe0cf5c850",
+    remote = "https://github.com/bazelbuild/rules_pkg.git",
+)
+
+python = use_extension("@rules_python//python/extensions:python.bzl", "python")
+python.toolchain(
+    is_default = True,
+    python_version = "3.12",
+)
+python.override(minor_mapping = {"3.12": "3.12.7"})
+
+pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
+pip.parse(
+    experimental_index_url = "https://pypi.org/simple",
+    hub_name = "pypi",
+    python_version = "3.12",
+    requirements_lock = "requirements.txt",
+)
+
+use_repo(pip, "pypi")
