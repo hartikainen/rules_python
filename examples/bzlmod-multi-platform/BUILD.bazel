@@ -1,0 +1,42 @@
+load("@aspect_rules_py//py:defs.bzl", "py_image_layer")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_load")
+load("@rules_python//python:defs.bzl", "py_binary")
+
+licenses(["notice"])
+
+py_binary(
+    name = "main",
+    srcs = ["main.py"],
+    deps = [
+        "@pypi//absl_py",
+        "@pypi//etils",
+        "@pypi//importlib_resources",  # why is this not included automatically?
+        "@pypi//jax",
+        "@pypi//mujoco",
+        "@pypi//mujoco_mjx",
+        "@pypi//simple_parsing",
+    ],
+)
+
+oci_image(
+    name = "main_image",
+    base = "@docker_io_python",
+    entrypoint = ["/app/main"],
+    tars = py_image_layer(
+        name = "main_layer",
+        binary = ":main",
+        root = "/app/",
+    ),
+)
+
+oci_load(
+    name = "main_image.load",
+    image = ":main_image",
+    repo_tags = ["main:latest"],
+)
+
+filegroup(
+    name = "main_image.tar",
+    srcs = [":main_image.load"],
+    output_group = "tarball",
+)
