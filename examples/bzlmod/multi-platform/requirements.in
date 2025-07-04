@@ -1,0 +1,8 @@
+absl-py
+etils[eapp,epath]
+importlib-resources
+jax; sys_platform == "linux" and platform_machine == "aarch64"
+jax; sys_platform == "darwin" and platform_machine == "arm64"
+jax[cuda12]; sys_platform == "linux" and platform_machine == "x86_64"
+mujoco
+mujoco-mjx

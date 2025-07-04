@@ -1,0 +1,46 @@
+"""Example of multi-platform python."""
+
+module(
+    name = "multi-platform-example",
+    version = "0.0.1",
+)
+
+bazel_dep(name = "rules_python", version = "1.5.1")
+bazel_dep(name = "rules_oci", version = "2.2.6")
+bazel_dep(name = "platforms", version = "1.0.0")
+bazel_dep(name = "aspect_rules_py", version = "1.6.1")
+bazel_dep(name = "rules_pkg", version = "1.1.0")
+
+python = use_extension("@rules_python//python/extensions:python.bzl", "python")
+python.toolchain(
+    is_default = True,
+    python_version = "3.12",
+)
+python.override(minor_mapping = {"3.12": "3.12.11"})
+
+pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
+pip.parse(
+    download_only = True,
+    experimental_index_url = "https://pypi.org/simple",
+    hub_name = "pypi",
+    python_version = "3.12",
+    requirements_by_platform = {
+        "requirements.linux_arm64.txt": "linux_aarch64",
+        "requirements.linux_x86_64.txt": "linux_x86_64",
+        "requirements.macos_arm64.txt": "osx_aarch64",
+    },
+)
+use_repo(pip, "pypi")
+
+oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
+oci.pull(
+    name = "docker_io_python",
+    digest = "sha256:034724ef64585eeb0e82385e9aabcbeabfe5f7cae2c2dcedb1da95114372b6d7",
+    image = "docker.io/library/python",
+    platforms = [
+        "linux/amd64",
+        "linux/arm64/v8",
+    ],
+    tag = "3.12-slim",
+)
+use_repo(oci, "docker_io_python", "docker_io_python_linux_amd64", "docker_io_python_linux_arm64_v8")
