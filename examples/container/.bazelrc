@@ -1,0 +1,25 @@
+common --@rules_python//python/config_settings:bootstrap_impl=script
+common --@rules_python//python/config_settings:venvs_site_packages=yes
+# See https://github.com/bazel-contrib/rules_python/issues/2864#issuecomment-2859325467
+# common --@rules_python//python/config_settings:venvs_use_declare_symlink=no
+
+
+# With container (`bazel run //:server_image.load && docker run -it --rm server:latest bash`)
+# | vens_site_packages | venvs_use_declare_symlink   | result  |
+# |--------------------|-----------------------------|---------|
+# | yes                | no                          | failure |
+# | no                 | no                          | success |
+# | no                 | yes                         | failure |
+# | yes                | yes                         | failure |
+# | -----------------------------------------------------------|
+# | bootstrap_impl=script but nothing else           | failure |
+# | all commented out                                | success |
+
+
+# Without container (`bazel run //:server`)
+# | vens_site_packages | result  |
+# |--------------------|---------|
+# | yes                | success |
+# | no                 | success |
+# | -----------------------------|
+# | all commented out  | success |
