@@ -1,0 +1,13 @@
+load("@rules_python//python:defs.bzl", "py_test")
+
+
+py_test(
+    name = "mujoco_test",
+    srcs = ["mujoco_test.py"],
+    deps = [
+        "@pypi//mujoco",
+        "@pypi//mujoco_mjx",
+        "@pypi//importlib_resources",
+        "@pypi//typing_extensions",  # ModuleNotFoundError: No module named 'typing_extensions'
+    ],
+)
