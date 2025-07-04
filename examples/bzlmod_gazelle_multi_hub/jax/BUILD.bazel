@@ -1,0 +1,14 @@
+load("@rules_python//python:defs.bzl", "py_binary")
+
+# NOTE: This annotation does not work.
+# gazelle:python_manifest_file_name gazelle_python_jax.yaml
+
+py_binary(
+    name = "main",
+    srcs = ["main.py"],
+    deps = [
+        "@pypi_jax//absl_py",
+        "@pypi_jax//etils",
+        "@pypi_jax//jax",
+    ],
+)

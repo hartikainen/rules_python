@@ -1,0 +1,78 @@
+load("@bazel_gazelle//:def.bzl", "gazelle")
+load("@pypi_jax//:requirements.bzl", all_whl_requirements_jax = "all_whl_requirements")
+load("@pypi_numpy//:requirements.bzl", all_whl_requirements_numpy = "all_whl_requirements")
+load("@rules_python_gazelle_plugin//manifest:defs.bzl", "gazelle_python_manifest")
+load("@rules_python_gazelle_plugin//modules_mapping:def.bzl", "modules_mapping")
+
+# gazelle:python_extension enabled
+# gazelle:python_generation_mode file
+# gazelle:python_generation_mode_per_file_include_init false
+# gazelle:python_label_normalization snake_case
+# gazelle:python_default_visibility NONE
+# This takes effect but does not allow configuring different BUILD files with
+# different manifest files.
+# ignore! gazelle:python_manifest_file_name gazelle_python_numpy.yaml
+
+modules_mapping(
+    name = "modules_map_jax",
+    exclude_patterns = [
+        "^_|(\\._)+",
+        "(\\.tests)+",
+    ],
+    include_stub_packages = True,
+    modules_mapping_name = "modules_mapping_pypi_jax.json",
+    wheels = all_whl_requirements_jax,
+)
+
+gazelle_python_manifest(
+    name = "gazelle_python_manifest_jax",
+    manifest = "gazelle_python_jax.yaml",
+    modules_mapping = ":modules_map_jax",
+    pip_repository_name = "pypi_jax",
+    tags = ["exclusive"],
+)
+
+modules_mapping(
+    name = "modules_map_numpy",
+    exclude_patterns = [
+        "^_|(\\._)+",
+        "(\\.tests)+",
+    ],
+    include_stub_packages = True,
+    modules_mapping_name = "modules_mapping_pypi_numpy.json",
+    wheels = all_whl_requirements_numpy,
+)
+
+gazelle_python_manifest(
+    name = "gazelle_python_manifest_numpy",
+    manifest = "gazelle_python_numpy.yaml",
+    modules_mapping = ":modules_map_numpy",
+    pip_repository_name = "pypi_numpy",
+    tags = ["exclusive"],
+)
+
+gazelle(
+    name = "gazelle",
+    gazelle = "@rules_python_gazelle_plugin//python:gazelle_binary",
+)
+
+# NOTE: would be nice if I could configure these targets to use a specific pip hub.
+# py_binary(
+#     name = "main_jax",
+#     srcs = ["main_jax.py"],
+#     deps = [
+#         "@pypi_jax//absl_py",
+#         "@pypi_jax//etils",
+#         "@pypi_jax//jax",
+#     ],
+# )
+
+# py_binary(
+#     name = "main_numpy",
+#     srcs = ["main_numpy.py"],
+#     deps = [
+#         "@pypi_jax//absl_py",
+#         "@pypi_jax//etils",
+#         "@pypi_jax//numpy",
+#     ],
+# )

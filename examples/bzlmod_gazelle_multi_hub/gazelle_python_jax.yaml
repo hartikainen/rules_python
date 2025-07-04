@@ -1,0 +1,24 @@
+# GENERATED FILE - DO NOT EDIT!
+#
+# To update this file, run:
+#   bazel run //:gazelle_python_manifest_jax.update
+
+---
+manifest:
+  modules_mapping:
+    absl: absl_py
+    docstring_parser: docstring_parser
+    etils: etils
+    fsspec: fsspec
+    importlib_resources: importlib_resources
+    jax: jax
+    jaxlib: jaxlib
+    ml_dtypes: ml_dtypes
+    numpy: numpy
+    opt_einsum: opt_einsum
+    scipy: scipy
+    simple_parsing: simple_parsing
+    typing_extensions: typing_extensions
+    zipp: zipp
+  pip_repository:
+    name: pypi_jax

@@ -1,0 +1,14 @@
+load("@rules_python//python:defs.bzl", "py_binary")
+
+# NOTE: This annotation does not exist.
+# gazelle:python_manifest_file_name gazelle_python_numpy.yaml
+
+py_binary(
+    name = "main",
+    srcs = ["main.py"],
+    deps = [
+        "@pypi_numpy//absl_py",
+        "@pypi_numpy//etils",
+        "@pypi_numpy//numpy",
+    ],
+)

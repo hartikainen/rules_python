@@ -1,0 +1,48 @@
+"""Example of multi-hub gazelle."""
+
+module(
+    name = "multi-hub-gazelle-example",
+    version = "0.0.1",
+)
+
+bazel_dep(name = "rules_python", version = "0.0.0")
+
+local_path_override(
+    module_name = "rules_python",
+    path = "../..",
+)
+
+bazel_dep(name = "rules_python_gazelle_plugin", version = "0.0.0")
+local_path_override(
+    module_name = "rules_python_gazelle_plugin",
+    path = "../../gazelle",
+)
+
+bazel_dep(name = "gazelle", version = "0.44.0", repo_name = "bazel_gazelle")
+
+python = use_extension("@rules_python//python/extensions:python.bzl", "python")
+python.toolchain(
+    is_default = True,
+    python_version = "3.12",
+)
+python.override(minor_mapping = {"3.12": "3.12.11"})
+
+pip_jax = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
+pip_jax.parse(
+    download_only = True,
+    experimental_index_url = "https://pypi.org/simple",
+    hub_name = "pypi_jax",
+    python_version = "3.12",
+    requirements_lock = "//:requirements.jax.txt",
+)
+use_repo(pip_jax, "pypi_jax")
+
+pip_numpy = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
+pip_numpy.parse(
+    download_only = True,
+    experimental_index_url = "https://pypi.org/simple",
+    hub_name = "pypi_numpy",
+    python_version = "3.12",
+    requirements_lock = "//:requirements.numpy.txt",
+)
+use_repo(pip_numpy, "pypi_numpy")
