@@ -1,3 +1,4 @@
+load("@aspect_bazel_lib//lib:transitions.bzl", "platform_transition_filegroup")
 load("@aspect_rules_py//py:defs.bzl", "py_image_layer")
 load("@rules_oci//oci:defs.bzl", "oci_image", "oci_load")
 load("@rules_python//python:defs.bzl", "py_binary")
@@ -19,7 +20,7 @@ py_binary(
 )
 
 oci_image(
-    name = "main_image",
+    name = "_main_image",
     base = "@docker_io_python",
     entrypoint = ["/app/main"],
     tars = py_image_layer(
@@ -28,6 +29,20 @@ oci_image(
         root = "/app/",
     ),
 )
+
+platform_transition_filegroup(
+    name = "main_image",
+    srcs = [":_main_image"],
+    target_platform = select({
+        "@platforms//cpu:arm64": "//platforms:linux_arm64",
+        "@platforms//cpu:x86_64": "//platforms:linux_x86_64",
+    }),
+)
+
+# alias(
+#     name = "main_image",
+#     actual = "_main_image",
+# )
 
 oci_load(
     name = "main_image.load",
