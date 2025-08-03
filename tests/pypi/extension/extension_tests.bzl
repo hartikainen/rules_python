@@ -421,7 +421,6 @@ def _test_simple_multiple_platforms_with_extras(env):
                         requirements_by_platform = {
                             "requirements.linux_arm64.txt": "linux_aarch64",
                             "requirements.linux_x86_64.txt": "linux_x86_64",
-                            "requirements.macos_arm64.txt": "osx_aarch64",
                         },
                         experimental_index_url = "pypi.org",
                     ),
@@ -429,17 +428,12 @@ def _test_simple_multiple_platforms_with_extras(env):
             ),
             read = lambda x: {
                 "requirements.linux_arm64.txt": """\
-jax==0.7.0 \
+package==0.7.0 \
     --hash=sha256:4dd8924f171ed73a4f1a6191e2f800ae1745069989b69fabc45593d6b6504003 \
     --hash=sha256:62833036cbaf4641d66ae94c61c0446890a91b2c0d153946583a0ebe04877a76
 """,
                 "requirements.linux_x86_64.txt": """\
-jax[cuda12]==0.7.0 \
-    --hash=sha256:62833036cbaf4641d66ae94c61c0446890a91b2c0d153946583a0ebe04877a76
-""",
-                "requirements.macos_arm64.txt": """\
-jax==0.7.0 \
-    --hash=sha256:4dd8924f171ed73a4f1a6191e2f800ae1745069989b69fabc45593d6b6504003 \
+package[extra]==0.7.0 \
     --hash=sha256:62833036cbaf4641d66ae94c61c0446890a91b2c0d153946583a0ebe04877a76
 """,
             }[x],
@@ -449,44 +443,44 @@ jax==0.7.0 \
         },
         minor_mapping = {"3.12": "3.12.11"},
         simpleapi_download = lambda *_, **__: {
-            "jax": parse_simpleapi_html(
-                url = "https://example.com/jax",
+            "package": parse_simpleapi_html(
+                url = "https://example.com/package",
                 content = """
-<a href="jax-0.7.0.tar.gz#sha256=4dd8924f171ed73a4f1a6191e2f800ae1745069989b69fabc45593d6b6504003" data-requires-python="&gt;=3.11">jax-0.7.0.tar.gz</a>
-<a href="jax-0.7.0-py3-none-any.whl#sha256=62833036cbaf4641d66ae94c61c0446890a91b2c0d153946583a0ebe04877a76" data-requires-python="&gt;=3.11" data-dist-info-metadata="sha256=99d99c9ac3b0b8273e2c248da18a3b73dce72cc178336881324e9ecf8da36d0a" data-core-metadata="sha256=99d99c9ac3b0b8273e2c248da18a3b73dce72cc178336881324e9ecf8da36d0a">jax-0.7.0-py3-none-any.whl</a>
+<a href="package-0.7.0.tar.gz#sha256=4dd8924f171ed73a4f1a6191e2f800ae1745069989b69fabc45593d6b6504003">package-0.7.0.tar.gz</a>
+<a href="package-0.7.0-py3-none-any.whl#sha256=62833036cbaf4641d66ae94c61c0446890a91b2c0d153946583a0ebe04877a76">package-0.7.0-py3-none-any.whl</a>
 """,
             ),
         },
     )
 
-    pypi.exposed_packages().contains_exactly({"pypi": ["jax"]})
+    pypi.exposed_packages().contains_exactly({"pypi": ["package"]})
     # TODO(hartikainen): Check these expectations.
     pypi.hub_whl_map().contains_exactly({"pypi": {
-        "jax": {
-            "pypi_312_jax_py3_none_any_62833036": [
+        "package": {
+            "pypi_312_package_py3_none_any_62833036": [
                 whl_config_setting(
                     # TODO(hartikainen): I think all these platforms use the same `.whl`
                     # and thus all three platforms should be included in the same
                     # `target_platforms` here?
-                    target_platforms = ["cp312_linux_arm64", "cp312_linux_x86_64", "cp312_osx_aarch64"],
+                    target_platforms = ["cp312_linux_arm64", "cp312_linux_x86_64"],
                     version = "3.12",
                 ),
             ],
         },
     }})
     pypi.whl_libraries().contains_exactly({
-        "pypi_312_jax_py3_none_any_62833036": {
+        "pypi_312_package_py3_none_any_62833036": {
             "dep_template": "@pypi//{name}:{target}",
             "download_only": True,
-            "experimental_target_platforms": ["linux_arm64", "linux_x86_64", "osx_aarch64"],
-            "filename": "jax-0.7.0-py3-none-any.whl",
+            "experimental_target_platforms": ["linux_arm64", "linux_x86_64"],
+            "filename": "package-0.7.0-py3-none-any.whl",
             "python_interpreter_target": "unit_test_interpreter_target",
             # NOTE(hartikainen): Perhaps this is part of the problem?
-            # This should say `jax[cuda12]==0.7.0` for `linux_x86_64` platform and
-            # `jax==0.7.0` for `linux_arm64` and `osx_aarch64`.
-            "requirement": "jax[cuda12]==0.7.0",
+            # This should say `package[extra]==0.7.0` for `linux_x86_64` platform and
+            # `package==0.7.0` for `linux_arm64`
+            "requirement": "package[extra]==0.7.0",
             "sha256": "62833036cbaf4641d66ae94c61c0446890a91b2c0d153946583a0ebe04877a76",
-            "urls": ["https://example.com/jax-0.7.0-py3-none-any.whl"],
+            "urls": ["https://example.com/package-0.7.0-py3-none-any.whl"],
         },
     })
     pypi.whl_mods().contains_exactly({})
