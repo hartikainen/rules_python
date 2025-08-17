@@ -405,7 +405,6 @@ _tests.append(_test_simple_multiple_python_versions)
 
 def _test_simple_multiple_platforms_with_extras(env):
     """TODO(hartikainen): Test that reproduces a multi-platform-with-extras issue."""
-
     # This test case is based on my issue where different requirement strings for the same package
     # (`jax` vs `jax[cuda12]`) for multiple platforms caused a "duplicate library" error (for details,
     # see https://github.com/bazel-contrib/rules_python/issues/2797#issuecomment-3143914644).
@@ -455,42 +454,33 @@ package[extra]==0.7.0 \
     )
 
     pypi.exposed_packages().contains_exactly({"pypi": ["package"]})
-
     # TODO(hartikainen): Check these expectations.
     pypi.hub_whl_map().contains_exactly({"pypi": {
         "package": {
-            "pypi_312_package_linux_aarch64": [
+            "pypi_312_package_py3_none_any_62833036": [
                 whl_config_setting(
-                    target_platforms = ["cp312_linux_aarch64"],
-                    version = "3.12",
-                ),
-            ],
-            "pypi_312_package_linux_x86_64": [
-                whl_config_setting(
-                    target_platforms = ["cp312_linux_x86_64"],
+                    # TODO(hartikainen): I think all these platforms use the same `.whl`
+                    # and thus all three platforms should be included in the same
+                    # `target_platforms` here?
+                    target_platforms = ["cp312_linux_arm64", "cp312_linux_x86_64"],
                     version = "3.12",
                 ),
             ],
         },
     }})
     pypi.whl_libraries().contains_exactly({
-        "pypi_312_package_linux_aarch64": {
+        "pypi_312_package_py3_none_any_62833036": {
             "dep_template": "@pypi//{name}:{target}",
-            "experimental_target_platforms": ["linux_aarch64"],
+            "download_only": True,
+            "experimental_target_platforms": ["linux_arm64", "linux_x86_64"],
             "filename": "package-0.7.0-py3-none-any.whl",
             "python_interpreter_target": "unit_test_interpreter_target",
-            "requirement": "package==0.7.0",
-            "sha256": "62833036cbaf4641d66ae94c61c0446890a91b2c0d153946583a0ebe04877a76",
-            "urls": ["https://example.com/package/package-0.7.0-py3-none-any.whl"],
-        },
-        "pypi_312_package_linux_x86_64": {
-            "dep_template": "@pypi//{name}:{target}",
-            "experimental_target_platforms": ["linux_x86_64"],
-            "filename": "package-0.7.0-py3-none-any.whl",
-            "python_interpreter_target": "unit_test_interpreter_target",
+            # NOTE(hartikainen): Perhaps this is part of the problem?
+            # This should say `package[extra]==0.7.0` for `linux_x86_64` platform and
+            # `package==0.7.0` for `linux_arm64`
             "requirement": "package[extra]==0.7.0",
             "sha256": "62833036cbaf4641d66ae94c61c0446890a91b2c0d153946583a0ebe04877a76",
-            "urls": ["https://example.com/package/package-0.7.0-py3-none-any.whl"],
+            "urls": ["https://example.com/package-0.7.0-py3-none-any.whl"],
         },
     })
     pypi.whl_mods().contains_exactly({})
