@@ -428,7 +428,14 @@ def _whl_repo(
         ]
 
     return struct(
-        repo_name = whl_repo_name(src.filename, src.sha256),
+        # TODO(hartikainen): I have no idea if this is correct. Should the repository
+        # name be based on the requirement (distribution + target platforms) rather than
+        # the specific wheel filename? Different requirements (e.g., with  different
+        # extras as in my test case) can resolve to the same wheel file, but they
+        # probably need to be distinct repositories to handle their transitive
+        # dependencies correctly.
+        repo_name = pypi_repo_name(normalize_name(src.distribution), *src.target_platforms),
+        # repo_name = whl_repo_name(src.filename, src.sha256),
         args = args,
         config_setting = whl_config_setting(
             version = python_version,
