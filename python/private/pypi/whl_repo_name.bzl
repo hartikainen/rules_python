@@ -61,19 +61,17 @@ def whl_repo_name(filename, sha256):
 
     return "_".join(parts)
 
-def pypi_repo_name(whl_name, *target_platforms):
+def pypi_repo_name(whl_name, target_platforms=[]):
     """Return a valid whl_library given a requirement line.
 
     Args:
         whl_name: {type}`str` the whl_name to use.
-        *target_platforms: {type}`list[str]` the target platforms to use in the name.
+        target_platforms: {type}`list[str]` the target platforms to use in the name.
 
     Returns:
         {type}`str` that can be used in {obj}`whl_library`.
     """
-    parts = [
-        normalize_name(whl_name),
-    ]
+    parts = [normalize_name(whl_name)]
     parts.extend([p.partition("_")[-1] for p in target_platforms])
 
     return "_".join(parts)
