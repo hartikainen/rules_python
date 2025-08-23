@@ -1179,7 +1179,7 @@ optimum[onnxruntime-gpu]==1.17.1 ; sys_platform == 'linux'
     pypi.hub_whl_map().contains_exactly({
         "pypi": {
             "optimum": {
-                "pypi_315_optimum_linux_aarch64_linux_x86_64_linux_x86_64_freethreaded": [
+                "pypi_315_optimum_onnxruntime-gpu_linux_aarch64_linux_x86_64_linux_x86_64_freethreaded": [
                     whl_config_setting(
                         version = "3.15",
                         target_platforms = [
@@ -1189,7 +1189,7 @@ optimum[onnxruntime-gpu]==1.17.1 ; sys_platform == 'linux'
                         ],
                     ),
                 ],
-                "pypi_315_optimum_osx_aarch64": [
+                "pypi_315_optimum_onnxruntime_osx_aarch64": [
                     whl_config_setting(
                         version = "3.15",
                         target_platforms = [
@@ -1202,12 +1202,12 @@ optimum[onnxruntime-gpu]==1.17.1 ; sys_platform == 'linux'
     })
 
     pypi.whl_libraries().contains_exactly({
-        "pypi_315_optimum_linux_aarch64_linux_x86_64_linux_x86_64_freethreaded": {
+        "pypi_315_optimum_onnxruntime-gpu_linux_aarch64_linux_x86_64_linux_x86_64_freethreaded": {
             "dep_template": "@pypi//{name}:{target}",
             "python_interpreter_target": "unit_test_interpreter_target",
             "requirement": "optimum[onnxruntime-gpu]==1.17.1",
         },
-        "pypi_315_optimum_osx_aarch64": {
+        "pypi_315_optimum_onnxruntime_osx_aarch64": {
             "dep_template": "@pypi//{name}:{target}",
             "python_interpreter_target": "unit_test_interpreter_target",
             "requirement": "optimum[onnxruntime]==1.17.1",
@@ -1266,7 +1266,7 @@ optimum[onnxruntime-gpu]==1.17.1 ; sys_platform == 'linux'
     pypi.hub_whl_map().contains_exactly({
         "pypi": {
             "optimum": {
-                "pypi_315_optimum_mylinuxx86_64": [
+                "pypi_315_optimum_onnxruntime-gpu_mylinuxx86_64": [
                     whl_config_setting(
                         version = "3.15",
                         target_platforms = [
@@ -1274,7 +1274,7 @@ optimum[onnxruntime-gpu]==1.17.1 ; sys_platform == 'linux'
                         ],
                     ),
                 ],
-                "pypi_315_optimum_myosxaarch64": [
+                "pypi_315_optimum_onnxruntime_myosxaarch64": [
                     whl_config_setting(
                         version = "3.15",
                         target_platforms = [
@@ -1287,12 +1287,12 @@ optimum[onnxruntime-gpu]==1.17.1 ; sys_platform == 'linux'
     })
 
     pypi.whl_libraries().contains_exactly({
-        "pypi_315_optimum_mylinuxx86_64": {
+        "pypi_315_optimum_onnxruntime-gpu_mylinuxx86_64": {
             "dep_template": "@pypi//{name}:{target}",
             "python_interpreter_target": "unit_test_interpreter_target",
             "requirement": "optimum[onnxruntime-gpu]==1.17.1",
         },
-        "pypi_315_optimum_myosxaarch64": {
+        "pypi_315_optimum_onnxruntime_myosxaarch64": {
             "dep_template": "@pypi//{name}:{target}",
             "python_interpreter_target": "unit_test_interpreter_target",
             "requirement": "optimum[onnxruntime]==1.17.1",
