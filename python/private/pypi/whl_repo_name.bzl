@@ -56,7 +56,7 @@ def whl_repo_name(filename, sha256, extras=[]):
         parts.append(python_tag)
         parts.append(abi_tag)
         parts.append(platform_tag)
-        parts.extend(sorted(extras))
+        parts.extend(sorted([e for e in extras if e]))
 
     if sha256:
         parts.append(sha256[:8])

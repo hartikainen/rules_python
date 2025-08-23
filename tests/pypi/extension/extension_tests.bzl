@@ -458,31 +458,37 @@ package[extra]==0.7.0 \
     )
 
     pypi.exposed_packages().contains_exactly({"pypi": ["package"]})
-    # TODO(hartikainen): Check these expectations.
     pypi.hub_whl_map().contains_exactly({"pypi": {
         "package": {
             "pypi_312_package_py3_none_any_62833036": [
                 whl_config_setting(
-                    # TODO(hartikainen): The two platforms both use the same `.whl` and
-                    # are thus included in the same `target_platforms` here.
-                    target_platforms = ["cp312_linux_aarch64", "cp312_linux_x86_64"],
+                    target_platforms = ["cp312_linux_aarch64"],
+                    version = "3.12",
+                ),
+            ],
+            "pypi_312_package_py3_none_any_extra_62833036": [
+                whl_config_setting(
+                    target_platforms = ["cp312_linux_x86_64"],
                     version = "3.12",
                 ),
             ],
         },
     }})
     pypi.whl_libraries().contains_exactly({
-        # NOTE(hartikainen): The error stems here. We have two different platforms
-        # pointing to the same universal wheel, both just with different extras. The key
-        # clashes and probably needs the extras to be included in it.
         "pypi_312_package_py3_none_any_62833036": {
             "dep_template": "@pypi//{name}:{target}",
-            "download_only": True,
-            "experimental_target_platforms": ["linux_aarch64", "linux_x86_64"],
+            "experimental_target_platforms": ["linux_aarch64"],
             "filename": "package-0.7.0-py3-none-any.whl",
             "python_interpreter_target": "unit_test_interpreter_target",
-            # NOTE(hartikainen):  This should say `package[extra]==0.7.0` for
-            # `linux_x86_64` platform and `package==0.7.0` for `linux_aarch64`
+            "requirement": "package==0.7.0",
+            "sha256": "62833036cbaf4641d66ae94c61c0446890a91b2c0d153946583a0ebe04877a76",
+            "urls": ["https://example.com/package/package-0.7.0-py3-none-any.whl"],
+        },
+        "pypi_312_package_py3_none_any_extra_62833036": {
+            "dep_template": "@pypi//{name}:{target}",
+            "experimental_target_platforms": ["linux_x86_64"],
+            "filename": "package-0.7.0-py3-none-any.whl",
+            "python_interpreter_target": "unit_test_interpreter_target",
             "requirement": "package[extra]==0.7.0",
             "sha256": "62833036cbaf4641d66ae94c61c0446890a91b2c0d153946583a0ebe04877a76",
             "urls": ["https://example.com/package/package-0.7.0-py3-none-any.whl"],
