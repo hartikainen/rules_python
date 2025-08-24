@@ -9,19 +9,19 @@ bazel_dep(name = "rules_python", version = "0.0.0")
 bazel_dep(name = "rules_oci", version = "2.2.6")
 bazel_dep(name = "platforms", version = "1.0.0")
 bazel_dep(name = "aspect_rules_py", version = "1.6.3")
-bazel_dep(name = "rules_pkg", version = "1.1.0")
+bazel_dep(name = "rules_pkg", version = "0.0.0")
 
 local_path_override(
     module_name = "rules_python",
     path = "../..",
 )
 
-# git_override(
-#     # See https://github.com/bazel-contrib/rules_python/issues/3056
-#     module_name = "rules_pkg",
-#     remote = "https://github.com/bazelbuild/rules_pkg.git",
-#     commit = "5a77a59c563d13e8c36665fcca039fbfff6fdba1",
-# )
+git_override(
+    # See https://github.com/bazel-contrib/rules_python/issues/3056
+    module_name = "rules_pkg",
+    remote = "https://github.com/bazelbuild/rules_pkg.git",
+    commit = "8c7c2cf7f1742a1fb199d0164b800d2939fa9fef",
+)
 
 python = use_extension("@rules_python//python/extensions:python.bzl", "python")
 python.toolchain(
