@@ -1,2 +1,4 @@
 mujoco
-mujoco-mjx
+# mujoco-mjx
+jax
+tensorflow
