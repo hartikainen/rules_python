@@ -1,7 +1,9 @@
 """A simple MuJoCo test."""
 
 import mujoco
-from mujoco import mjx
+import jax
+import tensorflow as tf
+# from mujoco import mjx
 
 
 def main() -> None:
@@ -20,13 +22,16 @@ def main() -> None:
     """
     )
     data = mujoco.MjData(model)
-    modelx = mjx.put_model(model)
-    datax = mjx.put_data(modelx, data)
+    # modelx = mjx.put_model(model)
+    # datax = mjx.put_data(modelx, data)
 
     mujoco.mj_resetData(model, data)
     for _ in range(2):
         mujoco.mj_step(model, data)
     print("Box position:", data.xpos[1])
+
+    print(f"{tf.__version__=}")
+    print(f"{jax.__version__=}")
 
 
 if __name__ == "__main__":

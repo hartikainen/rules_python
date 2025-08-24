@@ -6,7 +6,9 @@ py_test(
     srcs = ["mujoco_test.py"],
     deps = [
         "@pypi//mujoco",
-        "@pypi//mujoco_mjx",
+        # "@pypi//mujoco_mjx",
+        "@pypi//jax",
+        "@pypi//tensorflow",
         "@pypi//importlib_resources",
         "@pypi//typing_extensions",  # ModuleNotFoundError: No module named 'typing_extensions'
     ],
