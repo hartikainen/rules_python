@@ -32,6 +32,7 @@ def main() -> None:
 
     print(f"{tf.__version__=}")
     print(f"{jax.__version__=}")
+    print(f"{jax.devices()=}")
 
 
 if __name__ == "__main__":
