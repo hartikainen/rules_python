@@ -67,6 +67,30 @@ def _internal_dev_deps_impl(mctx):
         enable_implicit_namespace_pkgs = False,
     )
 
+    whl_from_dir_repo(
+        name = "implicit_namespace_legacy_whl",
+        root = "//tests/implicit_namespace_packages:testdata/ns-legacy/BUILD.bazel",
+        output = "ns_legacy-1.0-any-none-any.whl",
+    )
+    whl_library(
+        name = "implicit_namespace_legacy",
+        whl_file = "@implicit_namespace_legacy_whl//:ns_legacy-1.0-any-none-any.whl",
+        requirement = "ns-legacy",
+        enable_implicit_namespace_pkgs = False,
+    )
+
+    whl_from_dir_repo(
+        name = "implicit_namespace_legacy_sub_whl",
+        root = "//tests/implicit_namespace_packages:testdata/ns-legacy-sub/BUILD.bazel",
+        output = "ns_legacy_sub-1.0-any-none-any.whl",
+    )
+    whl_library(
+        name = "implicit_namespace_legacy_sub",
+        whl_file = "@implicit_namespace_legacy_sub_whl//:ns_legacy_sub-1.0-any-none-any.whl",
+        requirement = "ns-legacy-sub",
+        enable_implicit_namespace_pkgs = False,
+    )
+
 internal_dev_deps = module_extension(
     implementation = _internal_dev_deps_impl,
     doc = "This extension creates internal rules_python dev dependencies.",

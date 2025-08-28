@@ -20,5 +20,24 @@ class NamespacePackagesTest(unittest.TestCase):
         )
 
 
+    def test_legacy_packages_importable(self):
+        import legacy_main
+        import legacy_main.subpkg1
+        import legacy_main.subpkg1.subpkgmod
+
+        import legacy_side
+        import legacy_side.subpkg1
+        import legacy_side.subpkg1.subpkgmod
+
+        self.assertEqual("legacy_main.subpkg1", legacy_main.subpkg1.expected_name)
+        self.assertEqual(
+            "legacy_main.subpkg1.subpkgmod", legacy_main.subpkg1.subpkgmod.expected_name
+        )
+        self.assertEqual("legacy_side.subpkg1", legacy_side.subpkg1.expected_name)
+        self.assertEqual(
+            "legacy_side.subpkg1.subpkgmod", legacy_side.subpkg1.subpkgmod.expected_name
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

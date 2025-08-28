@@ -8,5 +8,7 @@ py_test(
     deps = [
         "@implicit_namespace_ns_sub1//:pkg",
         "@implicit_namespace_ns_sub2//:pkg",
+        "@implicit_namespace_legacy//:pkg",
+        "@implicit_namespace_legacy_sub//:pkg",
     ],
 )
