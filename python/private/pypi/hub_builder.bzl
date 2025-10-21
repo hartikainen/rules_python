@@ -536,8 +536,8 @@ def _whl_repo(
             target_platforms = src.target_platforms if is_multiple_versions else []
             return struct(
                 repo_name = pypi_repo_name(
-                    normalize_name(src.distribution),
-                    *target_platforms
+                    whl_name = normalize_name(src.distribution),
+                    target_platforms = target_platforms,
                 ),
                 args = args,
                 config_setting = whl_config_setting(
