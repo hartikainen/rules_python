@@ -6,11 +6,18 @@ module(
 )
 
 bazel_dep(name = "aspect_bazel_lib", version = "2.19.4")
-bazel_dep(name = "rules_python", version = "1.5.1")
+bazel_dep(name = "rules_python", version = "0.0.0")
 bazel_dep(name = "rules_oci", version = "2.2.6")
 bazel_dep(name = "platforms", version = "1.0.0")
 bazel_dep(name = "aspect_rules_py", version = "1.6.1")
 bazel_dep(name = "rules_pkg", version = "1.1.0")
+
+git_override(
+    module_name = "rules_python",
+    commit = "f6932393bd31ab1344f8d9cb95671ca44c0e30fe",
+    # aignas:refactor-simplify-markers
+    remote = "https://github.com/aignas/rules_python.git",
+)
 
 python = use_extension("@rules_python//python/extensions:python.bzl", "python")
 python.toolchain(
