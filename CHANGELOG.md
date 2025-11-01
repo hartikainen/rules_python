@@ -38,7 +38,8 @@ BEGIN_UNRELEASED_TEMPLATE
 
 {#v0-0-0-fixed}
 ### Fixed
-* Nothing fixed.
+* (gazelle) Remove {obj}`py_binary` targets with invalid `srcs`. This includes files
+  that are not generated or regular files.
 
 {#v0-0-0-added}
 ### Added
@@ -74,10 +75,10 @@ END_UNRELEASED_TEMPLATE
 * (toolchains) `py_runtime` and `PyRuntimeInfo` reject Python 2 settings.
   Setting `py_runtime.python_version = "PY2"` or non-None
   `PyRuntimeInfo.py2_runtime` is an error.
-* (pypi) `pipstar` flag has been flipped to be enabled by default, to turn it
-  off use `RULES_PYTHON_ENABLE_PIPSTAR=0` environment variable. If you do, please
+* (pypi) `pipstar` flag has been implemented for `WORKSPACE` and can be flipped to be enabled using `RULES_PYTHON_ENABLE_PIPSTAR=1` environment variable. If you do, please
   add a comment to
-  [#2949](https://github.com/bazel-contrib/rules_python/issues/2949).
+  [#2949](https://github.com/bazel-contrib/rules_python/issues/2949) if you run into any
+  problems.
   With this release we are deprecating {obj}`pip.parse.experimental_target_platforms` and
   {obj}`pip_repository.experimental_target_platforms`. For users using `WORKSPACE` and
   vendoring the `requirements.bzl` file, please re-vendor so that downstream is unaffected
@@ -112,6 +113,8 @@ END_UNRELEASED_TEMPLATE
   ([#3339](https://github.com/bazel-contrib/rules_python/issues/3339)).
 * (uv) {obj}`//python/uv:lock.bzl%lock` now works with a local platform
   runtime.
+* (pypi) `linux_riscv64` is added to the platforms list in `_pip_repository_impl`,
+  which fixes [a build issue for tensorflow on riscv64](https://github.com/bazel-contrib/rules_python/discussions/2729).
 * (toolchains) WORKSPACE builds now correctly register musl and freethreaded
   variants. Setting {obj}`--py_linux_libc=musl` and `--py_freethreaded=yes` now
   activate them, respectively.
