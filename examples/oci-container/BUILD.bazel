@@ -1,4 +1,4 @@
-load("@rules_img//img:layer.bzl", "image_layer")
+load("@aspect_rules_py//py:defs.bzl", "py_image_layer")
 load("@rules_img//img:image.bzl", "image_manifest")
 load("@rules_img//img:load.bzl", "image_load")
 load("@rules_python//python:defs.bzl", "py_binary")
@@ -18,11 +18,10 @@ py_binary(
     ],
 )
 
-image_layer(
+py_image_layer(
     name = "server_layer",
-    srcs = {
-        "/app/server": ":server",
-    },
+    binary = ":server",
+    root = "/app/",
 )
 
 image_manifest(
