@@ -1,5 +1,6 @@
-load("@aspect_rules_py//py:defs.bzl", "py_image_layer")
-load("@rules_oci//oci:defs.bzl", "oci_image", "oci_load")
+load("@rules_img//img:layer.bzl", "image_layer")
+load("@rules_img//img:image.bzl", "image_manifest")
+load("@rules_img//img:load.bzl", "image_load")
 load("@rules_python//python:defs.bzl", "py_binary")
 
 licenses(["notice"])
@@ -17,27 +18,28 @@ py_binary(
     ],
 )
 
-py_image_layer(
+image_layer(
     name = "server_layer",
-    binary = ":server",
-    root = "/app/",
+    srcs = {
+        "/app/server": ":server",
+    },
 )
 
-# oci_image(
-#     name = "server_image",
-#     base = "@docker_io_python",
-#     entrypoint = ["/app/server"],
-#     tars = [":server_layer"],
-# )
+image_manifest(
+    name = "server_image",
+    base = "@docker_io_python",
+    entrypoint = ["/app/server"],
+    layers = [":server_layer"],
+)
 
-# oci_load(
-#     name = "server_image.load",
-#     image = ":server_image",
-#     repo_tags = ["server:latest"],
-# )
+image_load(
+    name = "server_image.load",
+    image = ":server_image",
+    tag = "server:latest",
+)
 
-# filegroup(
-#     name = "server_image.tar",
-#     srcs = [":server_image.load"],
-#     output_group = "tarball",
-# )
+filegroup(
+    name = "server_image.tar",
+    srcs = [":server_image.load"],
+    output_group = "tarball",
+)
