@@ -12,8 +12,8 @@ py_binary(
         "@pypi//etils",
         "@pypi//flask",
         "@pypi//jax",
-        "@pypi//simple_parsing",
-        "@pypi//importlib_resources",  # why is this not included automatically?
+        # "@pypi//simple_parsing",  # why is this not included automatically?
+        # "@pypi//importlib_resources",  # why is this not included automatically?
     ],
 )
 
