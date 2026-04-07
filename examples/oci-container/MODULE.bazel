@@ -6,7 +6,7 @@ module(
 )
 
 bazel_dep(name = "rules_python", version = "2.0.0-rc4")
-bazel_dep(name = "rules_oci", version = "2.3.0")
+bazel_dep(name = "rules_img", version = "0.3.8")
 bazel_dep(name = "aspect_rules_py", version = "1.11.2")
 bazel_dep(name = "rules_pkg", version = "1.2.0")
 bazel_dep(name = "platforms", version = "1.0.0")
@@ -39,15 +39,12 @@ pip.parse(
 
 use_repo(pip, "pypi")
 
-oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
-oci.pull(
+pull = use_repo_rule("@rules_img//img:pull.bzl", "pull")
+pull(
     name = "docker_io_python",
     digest = "sha256:034724ef64585eeb0e82385e9aabcbeabfe5f7cae2c2dcedb1da95114372b6d7",
-    image = "docker.io/library/python",
-    platforms = [
-        "linux/amd64",
-        "linux/arm64/v8",
-    ],
+    registry = "index.docker.io",
+    repository = "library/python",
     tag = "3.12-slim",
+    layer_handling = "lazy",
 )
-use_repo(oci, "docker_io_python", "docker_io_python_linux_amd64", "docker_io_python_linux_arm64_v8")
