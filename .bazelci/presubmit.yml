@@ -437,6 +437,12 @@ tasks:
     working_directory: examples/pip_parse
     platform: windows
 
+  integration_test_py_spy_ubuntu:
+    <<: *reusable_build_test_all
+    name: "examples/py-spy: Ubuntu"
+    working_directory: examples/py-spy
+    platform: ubuntu2204
+
   integration_test_pip_parse_vendored_ubuntu_min_workspace:
     <<: *minimum_supported_version
     <<: *common_workspace_flags_min_bazel

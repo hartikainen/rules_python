@@ -1,0 +1,18 @@
+module(name = "rules_python_py_spy_example")
+
+bazel_dep(name = "rules_python", version = "0.0.0")
+local_path_override(
+    module_name = "rules_python",
+    path = "../..",
+)
+
+python = use_extension("@rules_python//python/extensions:python.bzl", "python")
+python.toolchain(python_version = "3.11.15")
+
+pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
+pip.parse(
+    hub_name = "pypi",
+    python_version = "3.11.15",
+    requirements_lock = "//:requirements_lock.txt",
+)
+use_repo(pip, "pypi")

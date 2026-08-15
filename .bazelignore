@@ -23,6 +23,7 @@ examples/multi_python_versions/bazel-multi_python_versions
 examples/pip_parse/bazel-pip_parse
 examples/pip_parse_vendored/bazel-pip_parse_vendored
 examples/pip_repository_annotations/bazel-pip_repository_annotations
+examples/py-spy/bazel-py-spy
 examples/py_proto_library/bazel-py_proto_library
 gazelle/bazel-gazelle
 gazelle/examples/bzlmod_build_file_generation/bazel-bin
