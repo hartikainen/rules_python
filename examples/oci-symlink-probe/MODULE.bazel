@@ -1,0 +1,61 @@
+module(name = "oci_symlink_probe")
+
+bazel_dep(name = "rules_python", version = "2.3.3")
+bazel_dep(name = "rules_img", version = "0.3.20")
+bazel_dep(name = "tar.bzl", version = "0.10.8")
+bazel_dep(name = "rules_oci", version = "2.3.0")
+bazel_dep(name = "platforms", version = "1.1.0")
+
+local_path_override(
+    module_name = "rules_python",
+    path = "../..",
+)
+
+single_version_override(
+    module_name = "tar.bzl",
+    patch_strip = 1,
+    patches = ["//:tar-preserve-symlinks.patch"],
+    version = "0.10.8",
+)
+
+python_config = use_extension("@rules_python//python/extensions:config.bzl", "config")
+python_config.explicit_init_py(default = True)
+
+python = use_extension("@rules_python//python/extensions:python.bzl", "python")
+python.toolchain(
+    is_default = True,
+    python_version = "3.13",
+)
+
+pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
+pip.parse(
+    enable_implicit_namespace_pkgs = True,
+    hub_name = "probe_pypi",
+    python_version = "3.13",
+    requirements_by_platform = {"//:requirements.txt": "linux_aarch64,osx_aarch64"},
+    target_platforms = [
+        "linux_aarch64",
+        "osx_aarch64",
+    ],
+)
+use_repo(pip, pypi = "probe_pypi")
+
+pull = use_repo_rule("@rules_img//img:pull.bzl", "pull")
+
+pull(
+    name = "docker_io_python",
+    digest = "sha256:034724ef64585eeb0e82385e9aabcbeabfe5f7cae2c2dcedb1da95114372b6d7",
+    layer_handling = "lazy",
+    registry = "index.docker.io",
+    repository = "library/python",
+    tag = "3.13-slim",
+)
+
+oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
+oci.pull(
+    name = "oci_python",
+    digest = "sha256:034724ef64585eeb0e82385e9aabcbeabfe5f7cae2c2dcedb1da95114372b6d7",
+    image = "docker.io/library/python",
+    platforms = ["linux/arm64/v8"],
+)
+use_repo(oci, "oci_python", "oci_python_linux_arm64_v8")

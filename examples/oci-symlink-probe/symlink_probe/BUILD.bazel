@@ -1,0 +1,116 @@
+load("@rules_img//img:image.bzl", "image_manifest")
+load("@rules_img//img:layer.bzl", "layer_from_binary", "layer_from_tar")
+load("@rules_img//img:load.bzl", "image_load")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_load")
+load("@rules_python//python:defs.bzl", "py_binary")
+load("@tar.bzl//tar:mtree.bzl", "mtree_mutate", "mtree_spec")
+load("@tar.bzl//tar:tar.bzl", "tar")
+
+py_binary(
+    name = "probe",
+    srcs = ["probe.py"],
+    legacy_create_init = False,
+    deps = [
+        "@pypi//absl_py",
+        "@pypi//numpy",
+    ],
+)
+
+layer_from_binary(
+    name = "layer",
+    binary = ":probe",
+    path = "/app/probe",
+)
+
+image_manifest(
+    name = "image",
+    base = "@docker_io_python",
+    layers = [":layer"],
+    platform = "//:linux_arm64",
+)
+
+image_load(
+    name = "load",
+    image = ":image",
+    registry = "docker.io",
+    repository = "library/codex-symlink-probe",
+    tag = "rules-img-0.3.20",
+)
+
+filegroup(
+    name = "tar",
+    srcs = [":load"],
+    output_group = "tarball",
+)
+
+mtree_spec(
+    name = "mtree",
+    srcs = [":probe"],
+)
+
+mtree_mutate(
+    name = "preserved",
+    srcs = [":probe"],
+    mtree = ":mtree",
+    package_dir = "app",
+    preserve_symlinks = True,
+)
+
+tar(
+    name = "raw_tar",
+    srcs = [":probe"],
+    mtree = ":mtree",
+    tags = ["manual"],
+)
+
+tar(
+    name = "preserved_tar",
+    srcs = [":probe"],
+    mtree = ":preserved",
+)
+
+layer_from_tar(
+    name = "preserved_layer",
+    src = ":preserved_tar",
+)
+
+image_manifest(
+    name = "preserved_image",
+    base = "@docker_io_python",
+    entrypoint = ["/app/symlink_probe/probe"],
+    layers = [":preserved_layer"],
+    platform = "//:linux_arm64",
+)
+
+image_load(
+    name = "preserved_load",
+    image = ":preserved_image",
+    registry = "docker.io",
+    repository = "library/codex-symlink-probe",
+    tag = "tar-bzl-0.10.8",
+)
+
+filegroup(
+    name = "preserved_image_tar",
+    srcs = [":preserved_load"],
+    output_group = "tarball",
+)
+
+oci_image(
+    name = "oci_image",
+    base = "@oci_python",
+    entrypoint = ["/app/symlink_probe/probe"],
+    tars = [":preserved_tar"],
+)
+
+oci_load(
+    name = "oci_load",
+    image = ":oci_image",
+    repo_tags = ["codex-symlink-probe:rules-oci-fixed-tar"],
+)
+
+filegroup(
+    name = "oci_tar",
+    srcs = [":oci_load"],
+    output_group = "tarball",
+)

@@ -1,0 +1,4 @@
+common --@rules_python//python/config_settings:venvs_site_packages=yes
+common --@rules_python//python/config_settings:venvs_use_declare_symlink=yes
+build --platforms=//:linux_arm64
+build --lockfile_mode=off
