@@ -25,6 +25,52 @@ load("//tests/support:py_reconfig.bzl", "py_reconfig_test")
 
 _basic_tests = []
 
+def _uv_with_runfiles_impl(ctx):
+    binary = ctx.attr.binary[DefaultInfo]
+    extension = ".exe" if binary.files_to_run.executable.basename.endswith(".exe") else ""
+    executable = ctx.actions.declare_file(ctx.label.name + extension)
+    ctx.actions.symlink(
+        output = executable,
+        target_file = binary.files_to_run.executable,
+        is_executable = True,
+    )
+    metadata = ctx.actions.declare_file(ctx.label.name + ".metadata")
+    ctx.actions.write(metadata, "uv wrapper metadata\n")
+    symlink_payload = ctx.actions.declare_file(ctx.label.name + ".symlink_payload")
+    ctx.actions.write(symlink_payload, "symlink payload\n")
+    root_symlink_payload = ctx.actions.declare_file(ctx.label.name + ".root_symlink_payload")
+    ctx.actions.write(root_symlink_payload, "root symlink payload\n")
+
+    launcher_files = []
+    if extension:
+        # The Windows launcher reads its sibling bootstrap or `.zip` archive.
+        stem = binary.files_to_run.executable.basename[:-len(extension)]
+        for file in binary.files.to_list():
+            if file.basename in [stem, stem + ".zip"]:
+                companion = ctx.actions.declare_file(ctx.label.name + file.basename[len(stem):])
+                ctx.actions.symlink(output = companion, target_file = file)
+                launcher_files.append(companion)
+
+    # Keep the payloads out of ordinary runfiles to require their symlink mappings.
+    runfiles = ctx.runfiles(
+        files = launcher_files,
+        symlinks = {"uv_wrapper/symlink_payload.txt": symlink_payload},
+        root_symlinks = {"uv_wrapper/root_symlink_payload.txt": root_symlink_payload},
+    ).merge(binary.default_runfiles)
+    return [DefaultInfo(
+        executable = executable,
+        files = depset([executable, metadata]),
+        runfiles = runfiles,
+    )]
+
+_uv_with_runfiles = rule(
+    implementation = _uv_with_runfiles_impl,
+    attrs = {
+        "binary": attr.label(executable = True, cfg = "target", mandatory = True),
+    },
+    executable = True,
+)
+
 def _test_reroot(env):
     reroot = lock_testing.reroot
     env.expect.that_str(
@@ -193,10 +239,16 @@ def lock_test_suite(name):
     )
 
     py_binary(
-        name = "uv_with_runfiles",
+        name = "uv_with_runfiles_main",
         srcs = ["uv_with_runfiles.py"],
+        main = "uv_with_runfiles.py",
         data = ["testdata/toolchain_payload.txt"],
         deps = ["//python/runfiles"],
+    )
+
+    _uv_with_runfiles(
+        name = "uv_with_runfiles",
+        binary = ":uv_with_runfiles_main",
     )
 
     uv_toolchain(
