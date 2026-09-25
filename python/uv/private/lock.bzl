@@ -628,6 +628,10 @@ def lock(
     All of the targets have `manual` tags as locking results cannot be cached.
     :::
 
+    :::{versionchanged} VERSION_NEXT_PATCH
+    The `name.run` target uses the `uv` cache by default.
+    :::
+
     Args:
         name: {type}`str` The prefix of all targets created by this macro.
         srcs: {type}`list[Label]` The sources that will be used. Add all of the
@@ -665,10 +669,6 @@ def lock(
             when locking the requirements. Defaults to the default python version
             configured by the {obj}`python` module extension.
         **kwargs: common kwargs passed to rules.
-
-    :::{versionchanged} VERSION_NEXT_PATCH
-    The `name.run` target uses the `uv` cache by default.
-    :::
     """
     update_target = "{}.update".format(name)
     locker_target = "{}.run".format(name)
