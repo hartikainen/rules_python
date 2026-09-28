@@ -6,10 +6,12 @@ load("//python/uv:lock.bzl", "lock")
 load("//tests/support/platforms:platforms.bzl", "platform_targets")
 
 def _cache_tests(name, is_windows, extension):
+    if is_windows:
+        platform = platform_targets.WINDOWS_X86_64
+    else:
+        platform = platform_targets.LINUX_X86_64
     config_settings = {
-        "//command_line_option:platforms": [
-            platform_targets.WINDOWS_X86_64 if is_windows else platform_targets.LINUX_X86_64,
-        ],
+        "//command_line_option:platforms": [platform],
     }
     for no_cache in [False, True]:
         subject = name + ("_no_cache" if no_cache else "_default")
@@ -42,7 +44,9 @@ def _cache_tests(name, is_windows, extension):
 
 def _test_build_impl(env, target):
     output = target[DefaultInfo].files.to_list()[0]
-    env.expect.that_target(target).action_generating(output.short_path).argv().contains("--no-cache")
+    env.expect.that_target(target).action_generating(
+        output.short_path,
+    ).argv().contains("--no-cache")
 
 def _test_windows_build_impl(env, target):
     env.expect.that_target(target).action_generating(
@@ -51,7 +55,9 @@ def _test_windows_build_impl(env, target):
 
 def _run_script(env, target):
     executable = target[DefaultInfo].files_to_run.executable
-    return env.expect.that_target(target).action_generating(executable.short_path).content()
+    return env.expect.that_target(target).action_generating(
+        executable.short_path,
+    ).content()
 
 def _test_run_impl(env, target):
     _run_script(env, target).split("--no-cache").has_size(1)
