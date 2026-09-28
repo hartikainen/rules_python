@@ -59,6 +59,10 @@ and runnable targets include the executable target's runfiles.
 :::
 """,
             mandatory = True,
+            # allow_files = True is used instead of allow_single_file = True
+            # because executable rules like py_binary include additional files
+            # (e.g. srcs) in DefaultInfo.files. executable = True still enforces
+            # a single executable.
             allow_files = True,
             executable = True,
             cfg = "exec",

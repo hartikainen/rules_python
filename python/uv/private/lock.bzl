@@ -31,7 +31,7 @@ _RunLockInfo = provider(
         "args": "The args passed to the `uv` by default when running the runnable target.",
         "env": "The env passed to the execution.",
         # Preserve the wrapper's runtime files and symlink mappings together;
-        # a `srcs` `depset` cannot represent the full runfiles layout.
+        # a regular depset cannot represent the full runfiles layout.
         "runfiles": "Runtime files required by the runnable target.",
         "template": "The template file for writing a script.",
     },
