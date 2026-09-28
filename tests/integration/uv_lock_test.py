@@ -208,20 +208,25 @@ class UvLockIntegrationTest(runner.TestCase):
                     self.test_tmp_dir / (Path(filename).name + ".cache")
                 )
                 output = self.repo_root / filename
+
                 output.unlink(missing_ok=True)
                 cold = self._run_cached_lock(target, "--offline", check=False)
                 self.assertNotEqual(cold.exit_code, 0, cold.describe())
+
                 self._run_cached_lock(target)
                 expected = output.read_text()
                 self.assertIn("my-local-pkg", expected)
+
                 output.unlink()
                 self._run_cached_lock(target, "--offline")
                 self.assertEqual(expected, output.read_text())
+
                 output.unlink()
                 bypass = self._run_cached_lock(
                     target, "--offline", "--no-cache", check=False
                 )
                 self.assertNotEqual(bypass.exit_code, 0, bypass.describe())
+
                 self.bazel_env["UV_NO_CACHE"] = "true"
                 try:
                     bypass_env = self._run_cached_lock(target, "--offline", check=False)
